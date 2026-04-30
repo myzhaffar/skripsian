@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,54 +9,78 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ['"Outfit"', "system-ui", "sans-serif"],
+        sans: ['"Plus Jakarta Sans"', "system-ui", "sans-serif"],
       },
       colors: {
-        brand: {
-          50: "#eef2ff",
-          100: "#e0e7ff",
-          200: "#c7d2fe",
-          300: "#a5b4fc",
-          400: "#818cf8",
-          500: "#6366f1",
-          600: "#4f46e5",
-          700: "#4338ca",
-          800: "#3730a3",
-          900: "#312e81",
-          950: "#1e1b4b",
-        },
-        surface: {
-          50: "#f8fafc",
-          100: "#f1f5f9",
-          200: "#e2e8f0",
-          300: "#cbd5e1",
-          400: "#94a3b8",
-          500: "#64748b",
-          600: "#475569",
-          700: "#334155",
-          800: "#1e293b",
-          900: "#0f172a",
-          950: "#020617",
-        },
+        background: "#FFFDF5",
+        foreground: "#1E293B",
+        muted: "#F1F5F9",
+        "muted-fg": "#64748B",
+        accent: "#8B5CF6",
+        "accent-fg": "#FFFFFF",
+        secondary: "#F472B6",
+        tertiary: "#FBBF24",
+        quaternary: "#34D399",
+        border: "#E2E8F0",
+        card: "#FFFFFF",
+        ring: "#8B5CF6",
+      },
+      borderRadius: {
+        sm: "8px",
+        md: "16px",
+        lg: "24px",
+        blob: "24px 24px 24px 0px",
+      },
+      borderWidth: {
+        DEFAULT: "2px",
+      },
+      boxShadow: {
+        pop: "4px 4px 0px 0px #1E293B",
+        "pop-hover": "6px 6px 0px 0px #1E293B",
+        "pop-active": "2px 2px 0px 0px #1E293B",
+        "sticker-violet": "6px 6px 0px 0px #8B5CF6",
+        "sticker-pink": "6px 6px 0px 0px #F472B6",
+        "sticker-yellow": "6px 6px 0px 0px #FBBF24",
+        "sticker-mint": "6px 6px 0px 0px #34D399",
+      },
+      transitionTimingFunction: {
+        bouncy: "cubic-bezier(0.34, 1.56, 0.64, 1)",
       },
       animation: {
-        "fade-in": "fadeIn 0.5s ease-out",
-        "slide-up": "slideUp 0.5s ease-out",
-        "slide-in-right": "slideInRight 0.3s ease-out",
-        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "pop-in": "popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        wiggle: "wiggle 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "slide-up": "slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "slide-in-right": "slideInRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "fade-in": "fadeIn 0.4s ease-out",
+        "bounce-subtle": "bounceSubtle 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
       },
       keyframes: {
+        popIn: {
+          "0%": { opacity: "0", transform: "scale(0.8)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        wiggle: {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "25%": { transform: "rotate(3deg)" },
+          "75%": { transform: "rotate(-3deg)" },
+        },
+        slideUp: {
+          "0%": { opacity: "0", transform: "translateY(16px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        slideInRight: {
+          "0%": { opacity: "0", transform: "translateX(16px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
-        slideUp: {
-          "0%": { opacity: "0", transform: "translateY(10px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
-        slideInRight: {
-          "0%": { opacity: "0", transform: "translateX(10px)" },
-          "100%": { opacity: "1", transform: "translateX(0)" },
+        bounceSubtle: {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.05)" },
+          "100%": { transform: "scale(1)" },
         },
       },
     },

@@ -1,17 +1,20 @@
 import { cn, StatusBimbingan } from '@/lib/utils';
 
-const statusConfig: Record<StatusBimbingan, { label: string; className: string }> = {
+const statusConfig: Record<StatusBimbingan, { label: string; bg: string; shadow: string }> = {
   Menunggu: {
     label: 'Menunggu',
-    className: 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300',
+    bg: 'bg-muted text-foreground',
+    shadow: 'shadow-[3px_3px_0px_0px_#CBD5E1]',
   },
   Revisi: {
     label: 'Revisi',
-    className: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    bg: 'bg-tertiary text-foreground',
+    shadow: 'shadow-[3px_3px_0px_0px_#D97706]',
   },
   ACC: {
     label: 'ACC',
-    className: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    bg: 'bg-quaternary text-foreground',
+    shadow: 'shadow-[3px_3px_0px_0px_#059669]',
   },
 };
 
@@ -25,8 +28,9 @@ export default function Badge({ status, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold tracking-wide uppercase',
-        config.className,
+        'inline-flex items-center px-3 py-1 rounded-full text-xs font-heading font-bold uppercase tracking-wider border-2 border-foreground',
+        config.bg,
+        config.shadow,
         className
       )}
     >

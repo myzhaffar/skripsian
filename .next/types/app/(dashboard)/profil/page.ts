@@ -1,4 +1,4 @@
-// File: /Users/myzhaffar/.gemini/antigravity/scratch/skripsian/src/app/(dashboard)/profil/page.tsx
+// File: /Users/myzhaffar/skripsian/src/app/(dashboard)/profil/page.tsx
 import * as entry from '../../../../../src/app/(dashboard)/profil/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

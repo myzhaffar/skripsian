@@ -6,8 +6,8 @@ import {
   PaginatedResponse,
   formatDateShort,
   truncate,
-  apiFetch,
 } from '@/lib/utils';
+import { getLogs, deleteLog as deleteLogQuery, exportLogsCSV } from '@/lib/supabase-queries';
 import { useToast } from '@/app/providers';
 import Badge from '@/components/ui/Badge';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
@@ -45,7 +45,7 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
   const fetchPage = async (p: number) => {
     setIsLoadingPage(true);
     try {
-      const res = await apiFetch<PaginatedResponse<LogBimbingan>>(`/api/log?page=${p}&limit=15`);
+      const res = await getLogs(skripsiId, p, 15);
       setData(res);
       setPage(p);
     } catch {
@@ -59,7 +59,7 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
     if (!deleteTarget) return;
     setIsDeleting(true);
     try {
-      await apiFetch(`/api/log/${deleteTarget.id}`, { method: 'DELETE' });
+      await deleteLogQuery(deleteTarget.id);
       addToast('Log berhasil dihapus!', 'success');
       setDeleteTarget(null);
       fetchPage(page);
@@ -71,8 +71,13 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
     }
   };
 
-  const handleExportCSV = () => {
-    window.open('/api/log/export', '_blank');
+  const handleExportCSV = async () => {
+    try {
+      await exportLogsCSV(skripsiId);
+      addToast('CSV berhasil diunduh!', 'success');
+    } catch {
+      addToast('Gagal mengekspor CSV.', 'error');
+    }
   };
 
   const handleEdit = (log: LogBimbingan) => {
@@ -90,38 +95,38 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
     <div className="space-y-4">
       {/* Top bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+        <h1 className="text-2xl font-heading font-extrabold text-foreground">
           Log Bimbingan
         </h1>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={onPrint} className="btn-ghost text-sm">
-            <Printer className="w-4 h-4" />
+            <Printer className="w-4 h-4" strokeWidth={2.5} />
             Cetak
           </button>
-          <button onClick={handleExportCSV} className="btn-secondary text-sm">
-            <Download className="w-4 h-4" />
+          <button onClick={handleExportCSV} className="btn-secondary text-sm !px-4 !py-2">
+            <Download className="w-4 h-4" strokeWidth={2.5} />
             Export CSV
           </button>
           <button
             onClick={() => { setEditingLog(null); setIsFormOpen(true); }}
-            className="btn-primary text-sm"
+            className="btn-primary text-sm !px-4 !py-2"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4" strokeWidth={2.5} />
             Tambah Bimbingan
           </button>
         </div>
       </div>
 
       {/* Table */}
-      <div className="glass-card overflow-hidden">
+      <div className="bg-secondary/5 border-2 border-foreground rounded-[16px] shadow-sticker-pink overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-surface-200 dark:border-surface-700">
+              <tr className="bg-accent text-white">
                 {['No', 'Tanggal', 'Bab/Topik', 'Status', 'Catatan Dosen', 'Aksi'].map((h, i) => (
                   <th
                     key={h}
-                    className={`${i === 5 ? 'text-right' : 'text-left'} px-4 py-3 text-xs font-semibold text-surface-500 dark:text-surface-400 uppercase tracking-wider ${
+                    className={`${i === 5 ? 'text-right' : 'text-left'} px-4 py-3 text-xs font-heading font-bold uppercase tracking-wider ${
                       i === 4 ? 'hidden md:table-cell' : ''
                     } ${i === 0 ? 'w-12' : ''} ${i === 5 ? 'w-28' : ''}`}
                   >
@@ -130,7 +135,7 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-100 dark:divide-surface-800">
+            <tbody>
               {data.data.map((log, index) => {
                 const isExpanded = expandedRow === log.id;
                 const rowNum = (page - 1) * 15 + index + 1;
@@ -140,6 +145,7 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
                     log={log}
                     rowNum={rowNum}
                     isExpanded={isExpanded}
+                    isEven={index % 2 === 0}
                     onToggleExpand={() => setExpandedRow(isExpanded ? null : log.id)}
                     onEdit={() => handleEdit(log)}
                     onDelete={() => setDeleteTarget(log)}
@@ -151,15 +157,15 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
         </div>
 
         {data.data.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-surface-400">
-            <p className="text-sm">Belum ada log bimbingan</p>
+          <div className="flex flex-col items-center justify-center py-12 text-muted-fg">
+            <p className="text-sm font-heading font-semibold">Belum ada log bimbingan</p>
           </div>
         )}
 
         {/* Pagination */}
         {data.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-surface-200 dark:border-surface-700">
-            <p className="text-xs text-surface-500">
+          <div className="flex items-center justify-between px-4 py-3 border-t-2 border-border">
+            <p className="text-xs text-muted-fg font-heading font-semibold">
               Halaman {page} dari {data.totalPages} ({data.total} data)
             </p>
             <div className="flex gap-1">
@@ -168,10 +174,10 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
                   key={p}
                   onClick={() => fetchPage(p)}
                   disabled={isLoadingPage}
-                  className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-all ${
+                  className={`px-3 py-1.5 text-xs rounded-full font-heading font-bold border-2 transition-all duration-300 ease-bouncy ${
                     p === page
-                      ? 'bg-brand-500 text-white'
-                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
+                      ? 'bg-accent text-white border-foreground shadow-[2px_2px_0px_0px_#1E293B]'
+                      : 'text-foreground border-transparent hover:border-foreground hover:bg-muted'
                   }`}
                 >
                   {p}
@@ -206,11 +212,12 @@ export default function LogTable({ skripsiId, initialData, onRefresh, onPrint }:
   );
 }
 
-/* Extracted row component to avoid key issues with fragments */
+/* Extracted row component */
 function LogRow({
   log,
   rowNum,
   isExpanded,
+  isEven,
   onToggleExpand,
   onEdit,
   onDelete,
@@ -218,6 +225,7 @@ function LogRow({
   log: LogBimbingan;
   rowNum: number;
   isExpanded: boolean;
+  isEven: boolean;
   onToggleExpand: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -225,25 +233,25 @@ function LogRow({
   return (
     <>
       <tr
-        className="hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors cursor-pointer"
+        className={`hover:bg-tertiary/10 transition-colors cursor-pointer border-b border-border ${isEven ? 'bg-muted/30' : 'bg-card'}`}
         onClick={onToggleExpand}
       >
-        <td className="px-4 py-3 text-sm text-surface-500">{rowNum}</td>
-        <td className="px-4 py-3 text-sm text-surface-700 dark:text-surface-300 whitespace-nowrap">
+        <td className="px-4 py-3 text-sm text-muted-fg font-heading font-bold">{rowNum}</td>
+        <td className="px-4 py-3 text-sm text-foreground font-sans whitespace-nowrap">
           {formatDateShort(log.tanggalBimbingan)}
         </td>
-        <td className="px-4 py-3 text-sm font-medium text-surface-900 dark:text-surface-100">
+        <td className="px-4 py-3 text-sm font-heading font-bold text-foreground">
           <div className="flex items-center gap-2">
             {isExpanded ? (
-              <ChevronDown className="w-4 h-4 text-surface-400 flex-shrink-0" />
+              <ChevronDown className="w-4 h-4 text-accent flex-shrink-0" strokeWidth={2.5} />
             ) : (
-              <ChevronRight className="w-4 h-4 text-surface-400 flex-shrink-0" />
+              <ChevronRight className="w-4 h-4 text-muted-fg flex-shrink-0" strokeWidth={2.5} />
             )}
             {log.babBahasan}
           </div>
         </td>
         <td className="px-4 py-3"><Badge status={log.statusBimbingan} /></td>
-        <td className="px-4 py-3 text-sm text-surface-500 hidden md:table-cell max-w-[200px]">
+        <td className="px-4 py-3 text-sm text-muted-fg font-sans hidden md:table-cell max-w-[200px]">
           {log.catatanDosen ? truncate(log.catatanDosen, 50) : '-'}
         </td>
         <td className="px-4 py-3 text-right">
@@ -253,43 +261,43 @@ function LogRow({
                 href={log.linkFile}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-500 transition-colors"
+                className="w-8 h-8 rounded-full border-2 border-transparent hover:border-foreground hover:bg-accent/10 flex items-center justify-center text-accent transition-all duration-300 ease-bouncy"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-4 h-4" strokeWidth={2.5} />
               </a>
             )}
             <button
               onClick={onEdit}
-              className="p-2 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-500 transition-colors"
+              className="w-8 h-8 rounded-full border-2 border-transparent hover:border-foreground hover:bg-tertiary/30 flex items-center justify-center text-foreground transition-all duration-300 ease-bouncy"
             >
-              <Edit3 className="w-4 h-4" />
+              <Edit3 className="w-4 h-4" strokeWidth={2.5} />
             </button>
             <button
               onClick={onDelete}
-              className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500 transition-colors"
+              className="w-8 h-8 rounded-full border-2 border-transparent hover:border-foreground hover:bg-red-100 flex items-center justify-center text-red-500 transition-all duration-300 ease-bouncy"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </div>
         </td>
       </tr>
       {isExpanded && (
         <tr>
-          <td colSpan={6} className="px-6 py-4 bg-surface-50/50 dark:bg-surface-800/30">
+          <td colSpan={6} className="px-6 py-4 bg-accent/5 border-b border-border">
             <div className="space-y-4">
               {log.deskripsiProgres && (
                 <div>
-                  <h4 className="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-heading font-bold text-foreground uppercase tracking-wider mb-2">
                     Deskripsi Progres
                   </h4>
-                  <p className="text-sm text-surface-700 dark:text-surface-300 leading-relaxed">
+                  <p className="text-sm text-foreground/70 font-sans leading-relaxed">
                     {log.deskripsiProgres}
                   </p>
                 </div>
               )}
               {log.catatanDosen && (
                 <div>
-                  <h4 className="text-xs font-semibold text-surface-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-heading font-bold text-foreground uppercase tracking-wider mb-2">
                     Checklist Revisi
                   </h4>
                   <ChecklistItems logId={log.id} catatanDosen={log.catatanDosen} />

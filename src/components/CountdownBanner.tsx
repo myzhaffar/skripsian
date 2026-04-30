@@ -10,62 +10,68 @@ interface CountdownBannerProps {
 export default function CountdownBanner({ targetLulus }: CountdownBannerProps) {
   const days = daysRemaining(targetLulus);
 
-  let colorClasses: string;
-  let bgGradient: string;
+  let bgColor: string;
+  let shadowColor: string;
   let Icon = GraduationCap;
   let emoji = '🎓';
+  let iconBg = 'bg-quaternary';
 
   if (days <= 0) {
-    colorClasses = 'text-white';
-    bgGradient = 'from-emerald-500 to-teal-600';
+    bgColor = 'bg-quaternary';
+    shadowColor = 'shadow-[6px_6px_0px_0px_#059669]';
     Icon = PartyPopper;
     emoji = '🎉';
+    iconBg = 'bg-white/30';
   } else if (days > 60) {
-    colorClasses = 'text-white';
-    bgGradient = 'from-emerald-500 to-emerald-700';
+    bgColor = 'bg-quaternary';
+    shadowColor = 'shadow-[6px_6px_0px_0px_#059669]';
+    iconBg = 'bg-white/30';
   } else if (days >= 30) {
-    colorClasses = 'text-white';
-    bgGradient = 'from-amber-500 to-orange-600';
+    bgColor = 'bg-tertiary';
+    shadowColor = 'shadow-[6px_6px_0px_0px_#D97706]';
     Icon = Clock;
     emoji = '⏰';
+    iconBg = 'bg-white/30';
   } else {
-    colorClasses = 'text-white';
-    bgGradient = 'from-red-500 to-rose-700';
+    bgColor = 'bg-secondary';
+    shadowColor = 'shadow-[6px_6px_0px_0px_#BE185D]';
     Icon = AlertTriangle;
     emoji = '🔥';
+    iconBg = 'bg-white/30';
   }
 
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl p-6 bg-gradient-to-r shadow-lg animate-fade-in',
-        bgGradient,
-        colorClasses
+        'relative overflow-hidden rounded-[16px] p-6 border-2 border-foreground animate-pop-in',
+        bgColor,
+        shadowColor
       )}
     >
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/10 -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 translate-y-1/2 -translate-x-1/2" />
+      {/* Decorative shapes */}
+      <div className="absolute top-3 right-4 w-12 h-12 rounded-full border-2 border-foreground/20 bg-white/10" />
+      <div className="absolute bottom-2 right-20 w-6 h-6 rotate-45 border-2 border-foreground/20 bg-white/10" />
+      <div className="absolute top-1 right-24 w-4 h-4 rounded-full bg-white/15" />
 
       <div className="relative flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <Icon className="w-7 h-7" />
+          <div className={cn('w-12 h-12 rounded-full border-2 border-foreground flex items-center justify-center', iconBg)}>
+            <Icon className="w-7 h-7 text-foreground" strokeWidth={2.5} />
           </div>
           <div>
             {days <= 0 ? (
               <>
-                <h2 className="text-2xl font-bold">Waktunya Sidang! {emoji}</h2>
-                <p className="text-sm opacity-90 mt-1">
+                <h2 className="text-2xl font-heading font-extrabold text-foreground">Waktunya Sidang! {emoji}</h2>
+                <p className="text-sm text-foreground/70 font-sans mt-1">
                   Target lulus sudah tercapai. Semangat sidangnya!
                 </p>
               </>
             ) : (
               <>
-                <h2 className="text-2xl font-bold">
+                <h2 className="text-2xl font-heading font-extrabold text-foreground">
                   {days} hari lagi menuju sidang {emoji}
                 </h2>
-                <p className="text-sm opacity-90 mt-1">
+                <p className="text-sm text-foreground/70 font-sans mt-1">
                   Target: {new Date(targetLulus + '-01').toLocaleDateString('id-ID', {
                     month: 'long',
                     year: 'numeric',
@@ -76,8 +82,10 @@ export default function CountdownBanner({ targetLulus }: CountdownBannerProps) {
           </div>
         </div>
 
-        <div className="hidden sm:flex items-center gap-2 text-4xl font-bold opacity-20">
-          <span>{Math.abs(days)}</span>
+        <div className="hidden sm:flex items-center">
+          <span className="text-5xl font-heading font-extrabold text-foreground/15">
+            {Math.abs(days)}
+          </span>
         </div>
       </div>
     </div>

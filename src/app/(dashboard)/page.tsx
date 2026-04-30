@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Skripsi, LogBimbingan, PaginatedResponse, apiFetch, daysSince } from '@/lib/utils';
+import { Skripsi, LogBimbingan, daysSince } from '@/lib/utils';
+import { getSkripsi, getAllLogs } from '@/lib/supabase-queries';
 import CountdownBanner from '@/components/CountdownBanner';
 import StatCard from '@/components/StatCard';
 import ActivityChart from '@/components/ActivityChart';
@@ -17,12 +18,13 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [skripsiRes, logRes] = await Promise.all([
-          apiFetch<Skripsi | null>('/api/skripsi'),
-          apiFetch<PaginatedResponse<LogBimbingan>>('/api/log?page=1&limit=100'),
-        ]);
+        const skripsiRes = await getSkripsi();
         setSkripsi(skripsiRes);
-        setLogs(logRes.data || []);
+
+        if (skripsiRes) {
+          const allLogs = await getAllLogs(skripsiRes.id);
+          setLogs(allLogs);
+        }
       } catch (err) {
         console.error('Failed to fetch dashboard data:', err);
       } finally {
@@ -36,8 +38,10 @@ export default function HomePage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-brand-500 animate-spin" />
-          <p className="text-sm text-surface-500 dark:text-surface-400">Memuat dashboard...</p>
+          <div className="w-12 h-12 rounded-full bg-accent border-2 border-foreground shadow-pop flex items-center justify-center animate-bounce-subtle">
+            <Loader2 className="w-6 h-6 text-white animate-spin" strokeWidth={2.5} />
+          </div>
+          <p className="text-sm text-muted-fg font-heading font-semibold">Memuat dashboard...</p>
         </div>
       </div>
     );
@@ -46,13 +50,13 @@ export default function HomePage() {
   if (!skripsi) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center mb-4">
-          <BookOpen className="w-8 h-8 text-brand-500" />
+        <div className="w-20 h-20 rounded-full bg-tertiary border-2 border-foreground shadow-sticker-yellow flex items-center justify-center mb-4 animate-pop-in">
+          <BookOpen className="w-10 h-10 text-foreground" strokeWidth={2.5} />
         </div>
-        <h2 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+        <h2 className="text-2xl font-heading font-extrabold text-foreground mb-2">
           Selamat Datang di Skripsi.an! 🎓
         </h2>
-        <p className="text-surface-500 dark:text-surface-400 mb-6 max-w-md">
+        <p className="text-muted-fg font-sans mb-6 max-w-md">
           Mulai dengan mengisi profil skripsi Anda terlebih dahulu untuk melacak progres bimbingan.
         </p>
         <Link href="/profil" className="btn-primary">
@@ -117,37 +121,37 @@ export default function HomePage() {
         <StatCard
           title="Total Sesi"
           value={totalSessions}
-          icon={<BookOpen className="w-5 h-5" />}
+          icon={<BookOpen className="w-5 h-5" strokeWidth={2.5} />}
           sparklineData={sessionSparkline}
           delay={0}
         />
         <StatCard
           title="Revisi Pending"
           value={pendingCount}
-          icon={<AlertCircle className="w-5 h-5" />}
+          icon={<AlertCircle className="w-5 h-5" strokeWidth={2.5} />}
           sparklineData={pendingSparkline}
           delay={1}
         />
         <StatCard
           title="Bab ACC"
           value={accCount}
-          icon={<CheckCircle2 className="w-5 h-5" />}
+          icon={<CheckCircle2 className="w-5 h-5" strokeWidth={2.5} />}
           sparklineData={accSparkline}
           delay={2}
         />
         <StatCard
           title="Hari Terakhir"
           value={sortedLogs.length > 0 ? lastSessionDays : '-'}
-          icon={<Clock className="w-5 h-5" />}
+          icon={<Clock className="w-5 h-5" strokeWidth={2.5} />}
           delay={3}
           badge={
             sortedLogs.length > 0 ? (
               lastSessionDays <= 7 ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-heading font-bold border-2 border-foreground bg-quaternary text-foreground shadow-[2px_2px_0px_0px_#059669]">
                   🔥 On Fire!
                 </span>
               ) : lastSessionDays > 14 ? (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-heading font-bold border-2 border-foreground bg-secondary text-foreground shadow-[2px_2px_0px_0px_#BE185D]">
                   ⚠️ Awas Dicoret
                 </span>
               ) : null

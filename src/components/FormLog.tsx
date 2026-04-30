@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { LogBimbingan, StatusBimbingan, apiFetch } from '@/lib/utils';
+import { LogBimbingan, StatusBimbingan } from '@/lib/utils';
+import { createLog, updateLog } from '@/lib/supabase-queries';
 import { useToast } from '@/app/providers';
 import Modal from '@/components/ui/Modal';
 
@@ -53,18 +54,24 @@ export default function FormLog({
 
     try {
       if (isEdit && editingLog) {
-        await apiFetch(`/api/log/${editingLog.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(form),
+        await updateLog(editingLog.id, {
+          tanggalBimbingan: form.tanggalBimbingan,
+          babBahasan: form.babBahasan,
+          deskripsiProgres: form.deskripsiProgres || undefined,
+          catatanDosen: form.catatanDosen || undefined,
+          statusBimbingan: form.statusBimbingan,
+          linkFile: form.linkFile || undefined,
         });
         addToast('Log berhasil diperbarui!', 'success');
       } else {
-        await apiFetch('/api/log', {
-          method: 'POST',
-          body: JSON.stringify({
-            skripsiId,
-            ...form,
-          }),
+        await createLog({
+          skripsiId,
+          tanggalBimbingan: form.tanggalBimbingan,
+          babBahasan: form.babBahasan,
+          deskripsiProgres: form.deskripsiProgres || undefined,
+          catatanDosen: form.catatanDosen || undefined,
+          statusBimbingan: form.statusBimbingan,
+          linkFile: form.linkFile || undefined,
         });
         addToast('Log bimbingan berhasil ditambahkan!', 'success');
       }
@@ -123,12 +130,12 @@ export default function FormLog({
           <label className="label-text">Catatan Dosen (satu per baris)</label>
           <textarea
             className="input-field min-h-[80px] resize-y"
-            placeholder="Catatan 1&#10;Catatan 2&#10;Catatan 3"
+            placeholder={"Catatan 1\nCatatan 2\nCatatan 3"}
             value={form.catatanDosen}
             onChange={(e) => setForm({ ...form, catatanDosen: e.target.value })}
             rows={3}
           />
-          <p className="mt-1 text-xs text-surface-400 dark:text-surface-500">
+          <p className="mt-1.5 text-xs text-muted-fg font-sans">
             Setiap baris akan menjadi checklist item
           </p>
         </div>

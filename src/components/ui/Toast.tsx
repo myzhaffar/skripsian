@@ -11,33 +11,49 @@ const iconMap = {
 };
 
 const colorMap = {
-  success: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300',
-  error: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300',
-  info: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300',
+  success: {
+    bg: 'bg-quaternary/20 border-foreground',
+    shadow: 'shadow-[4px_4px_0px_0px_#34D399]',
+    icon: 'text-emerald-700',
+  },
+  error: {
+    bg: 'bg-red-100 border-foreground',
+    shadow: 'shadow-[4px_4px_0px_0px_#EF4444]',
+    icon: 'text-red-700',
+  },
+  info: {
+    bg: 'bg-accent/10 border-foreground',
+    shadow: 'shadow-[4px_4px_0px_0px_#8B5CF6]',
+    icon: 'text-accent',
+  },
 };
 
 export default function ToastContainer() {
   const { toasts, removeToast } = useToast();
 
   return (
-    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-3 pointer-events-none">
       {toasts.map((toast) => {
         const Icon = iconMap[toast.type];
+        const colors = colorMap[toast.type];
         return (
           <div
             key={toast.id}
             className={cn(
-              'pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-lg animate-slide-in-right min-w-[280px] max-w-[400px]',
-              colorMap[toast.type]
+              'pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-full border-2 animate-slide-in-right min-w-[280px] max-w-[400px]',
+              colors.bg,
+              colors.shadow
             )}
           >
-            <Icon className="w-5 h-5 flex-shrink-0" />
-            <p className="text-sm font-medium flex-1">{toast.message}</p>
+            <div className={cn('w-7 h-7 rounded-full border-2 border-foreground flex items-center justify-center flex-shrink-0', toast.type === 'success' ? 'bg-quaternary' : toast.type === 'error' ? 'bg-red-400' : 'bg-accent')}>
+              <Icon className="w-4 h-4 text-white" strokeWidth={2.5} />
+            </div>
+            <p className="text-sm font-heading font-semibold text-foreground flex-1">{toast.message}</p>
             <button
               onClick={() => removeToast(toast.id)}
-              className="p-0.5 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors flex-shrink-0"
+              className="p-1 rounded-full hover:bg-foreground/10 transition-colors flex-shrink-0"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 text-foreground" strokeWidth={2.5} />
             </button>
           </div>
         );

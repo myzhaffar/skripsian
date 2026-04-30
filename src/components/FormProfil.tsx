@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Skripsi, apiFetch, USER_EMAIL } from '@/lib/utils';
+import { Skripsi } from '@/lib/utils';
+import { createSkripsi, updateSkripsi, USER_EMAIL } from '@/lib/supabase-queries';
 import { useToast } from '@/app/providers';
 import { Save, User } from 'lucide-react';
 
@@ -43,16 +44,10 @@ export default function FormProfil({ initialData, onSuccess }: FormProfilProps) 
 
     try {
       if (isEdit && initialData) {
-        await apiFetch(`/api/skripsi/${initialData.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(form),
-        });
+        await updateSkripsi(initialData.id, form);
         addToast('Profil berhasil diperbarui!', 'success');
       } else {
-        await apiFetch('/api/skripsi', {
-          method: 'POST',
-          body: JSON.stringify(form),
-        });
+        await createSkripsi(form);
         addToast('Profil berhasil dibuat!', 'success');
       }
       onSuccess();
@@ -66,20 +61,20 @@ export default function FormProfil({ initialData, onSuccess }: FormProfilProps) 
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center">
-          <User className="w-5 h-5 text-brand-500" />
+        <div className="w-12 h-12 rounded-full bg-secondary border-2 border-foreground shadow-[3px_3px_0px_0px_#1E293B] flex items-center justify-center">
+          <User className="w-6 h-6 text-white" strokeWidth={2.5} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-surface-900 dark:text-surface-100">
+          <h1 className="text-2xl font-heading font-extrabold text-foreground">
             Profil Skripsi
           </h1>
-          <p className="text-sm text-surface-500 dark:text-surface-400">
+          <p className="text-sm text-muted-fg font-sans">
             {isEdit ? 'Perbarui informasi skripsi Anda' : 'Isi data skripsi untuk memulai'}
           </p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-card p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="bg-quaternary/5 border-2 border-foreground rounded-[16px] shadow-sticker-pink p-6 space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label className="label-text">NIM</label>
@@ -109,11 +104,11 @@ export default function FormProfil({ initialData, onSuccess }: FormProfilProps) 
           <label className="label-text">Email</label>
           <input
             type="email"
-            className="input-field bg-surface-100 dark:bg-surface-800 cursor-not-allowed"
+            className="input-field !bg-muted cursor-not-allowed"
             value={form.emailMahasiswa}
             readOnly
           />
-          <p className="mt-1 text-xs text-surface-400 dark:text-surface-500">
+          <p className="mt-1.5 text-xs text-muted-fg font-sans">
             Email tidak bisa diubah pada Phase 1
           </p>
         </div>
@@ -160,7 +155,7 @@ export default function FormProfil({ initialData, onSuccess }: FormProfilProps) 
             className="btn-primary w-full sm:w-auto"
             disabled={isLoading}
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-4 h-4" strokeWidth={2.5} />
             {isLoading ? 'Menyimpan...' : isEdit ? 'Perbarui Profil' : 'Simpan Profil'}
           </button>
         </div>

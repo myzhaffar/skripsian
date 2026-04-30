@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Skripsi, apiFetch } from '@/lib/utils';
+import { Skripsi } from '@/lib/utils';
+import { getSkripsi } from '@/lib/supabase-queries';
 import FormProfil from '@/components/FormProfil';
 import { Loader2 } from 'lucide-react';
 
@@ -11,7 +12,7 @@ export default function ProfilPage() {
 
   const fetchSkripsi = async () => {
     try {
-      const res = await apiFetch<Skripsi | null>('/api/skripsi');
+      const res = await getSkripsi();
       setSkripsi(res);
     } catch (err) {
       console.error('Failed to fetch skripsi:', err);
@@ -28,8 +29,10 @@ export default function ProfilPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-brand-500 animate-spin" />
-          <p className="text-sm text-surface-500 dark:text-surface-400">Memuat profil...</p>
+          <div className="w-12 h-12 rounded-full bg-quaternary border-2 border-foreground shadow-pop flex items-center justify-center animate-bounce-subtle">
+            <Loader2 className="w-6 h-6 text-white animate-spin" strokeWidth={2.5} />
+          </div>
+          <p className="text-sm text-muted-fg font-heading font-semibold">Memuat profil...</p>
         </div>
       </div>
     );

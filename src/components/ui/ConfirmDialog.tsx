@@ -25,10 +25,10 @@ export default function ConfirmDialog({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} className="max-w-sm">
       <div className="flex flex-col items-center text-center py-2">
-        <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-          <AlertTriangle className="w-6 h-6 text-red-500" />
+        <div className="w-14 h-14 rounded-full bg-red-100 border-2 border-foreground shadow-[3px_3px_0px_0px_#EF4444] flex items-center justify-center mb-4">
+          <AlertTriangle className="w-7 h-7 text-red-500" strokeWidth={2.5} />
         </div>
-        <p className="text-surface-600 dark:text-surface-400 mb-6">{message}</p>
+        <p className="text-foreground/70 mb-6 font-sans">{message}</p>
         <div className="flex gap-3 w-full">
           <button
             onClick={onClose}

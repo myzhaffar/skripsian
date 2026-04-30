@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useTheme } from '@/app/providers';
 import { Chart, registerables } from 'chart.js';
 import { LogBimbingan } from '@/lib/utils';
 
@@ -14,7 +13,6 @@ interface ActivityChartProps {
 export default function ActivityChart({ logs }: ActivityChartProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<Chart | null>(null);
-  const { theme } = useTheme();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -45,14 +43,13 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
       data.push(count);
     }
 
-    const isDark = theme === 'dark';
-    const gridColor = isDark ? 'rgba(148, 163, 184, 0.1)' : 'rgba(148, 163, 184, 0.2)';
-    const textColor = isDark ? '#94a3b8' : '#64748b';
+    const gridColor = 'rgba(148, 163, 184, 0.15)';
+    const textColor = '#64748B';
 
     // Create gradient fill
     const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, isDark ? 'rgba(99, 102, 241, 0.25)' : 'rgba(99, 102, 241, 0.15)');
-    gradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+    gradient.addColorStop(0, 'rgba(139, 92, 246, 0.2)');
+    gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
 
     chartRef.current = new Chart(ctx, {
       type: 'line',
@@ -62,15 +59,15 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
           {
             label: 'Sesi Bimbingan',
             data,
-            borderColor: '#6366f1',
+            borderColor: '#8B5CF6',
             backgroundColor: gradient,
-            borderWidth: 2.5,
+            borderWidth: 3,
             fill: true,
             tension: 0.4,
             pointRadius: 0,
-            pointHoverRadius: 6,
-            pointHoverBackgroundColor: '#6366f1',
-            pointHoverBorderColor: '#fff',
+            pointHoverRadius: 7,
+            pointHoverBackgroundColor: '#8B5CF6',
+            pointHoverBorderColor: '#1E293B',
             pointHoverBorderWidth: 2,
           },
         ],
@@ -85,15 +82,15 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: isDark ? '#1e293b' : '#fff',
-            titleColor: isDark ? '#f1f5f9' : '#0f172a',
-            bodyColor: isDark ? '#94a3b8' : '#475569',
-            borderColor: isDark ? '#334155' : '#e2e8f0',
-            borderWidth: 1,
+            backgroundColor: '#FFFFFF',
+            titleColor: '#1E293B',
+            bodyColor: '#64748B',
+            borderColor: '#1E293B',
+            borderWidth: 2,
             cornerRadius: 12,
             padding: 12,
-            titleFont: { size: 13, weight: 'bold' as const },
-            bodyFont: { size: 12 },
+            titleFont: { size: 13, weight: 'bold' as const, family: 'Outfit' },
+            bodyFont: { size: 12, family: 'Plus Jakarta Sans' },
             displayColors: false,
             callbacks: {
               label: (ctx) => `${ctx.parsed.y} sesi`,
@@ -105,7 +102,7 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
             grid: { display: false },
             ticks: {
               color: textColor,
-              font: { size: 10 },
+              font: { size: 10, family: 'Plus Jakarta Sans' },
               maxTicksLimit: 10,
             },
             border: { display: false },
@@ -116,7 +113,7 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
             grid: { color: gridColor },
             ticks: {
               color: textColor,
-              font: { size: 11 },
+              font: { size: 11, family: 'Plus Jakarta Sans' },
               stepSize: 1,
             },
             border: { display: false },
@@ -135,11 +132,11 @@ export default function ActivityChart({ logs }: ActivityChartProps) {
         chartRef.current = null;
       }
     };
-  }, [logs, theme]);
+  }, [logs]);
 
   return (
-    <div className="glass-card p-6 animate-fade-in">
-      <h3 className="text-sm font-semibold text-surface-900 dark:text-surface-100 mb-4">
+    <div className="bg-accent/5 border-2 border-foreground rounded-[16px] p-6 shadow-sticker-violet animate-fade-in">
+      <h3 className="text-sm font-heading font-bold text-foreground mb-4 uppercase tracking-wider">
         Aktivitas Bimbingan (30 Hari Terakhir)
       </h3>
       <div className="h-[280px]">

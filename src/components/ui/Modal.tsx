@@ -51,26 +51,29 @@ export default function Modal({ isOpen, onClose, title, children, className }: M
       }}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" />
+      <div className="absolute inset-0 bg-foreground/30 animate-fade-in" />
 
       {/* Content */}
       <div
         ref={contentRef}
         className={cn(
-          'relative w-full max-w-lg bg-white dark:bg-surface-800 rounded-2xl shadow-2xl animate-slide-up',
+          'relative w-full max-w-lg bg-card border-2 border-foreground rounded-[16px] shadow-pop animate-pop-in',
           'max-h-[90vh] flex flex-col',
           className
         )}
       >
+        {/* Accent bar */}
+        <div className="h-2 bg-accent rounded-t-[14px]" />
+
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-surface-200 dark:border-surface-700">
-          <h2 className="text-lg font-semibold text-surface-900 dark:text-surface-100">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b-2 border-border">
+          <h2 className="text-lg font-heading font-bold text-foreground">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-surface-100 dark:hover:bg-surface-700 transition-colors"
+            className="w-8 h-8 rounded-full border-2 border-foreground flex items-center justify-center hover:bg-tertiary transition-all duration-300 ease-bouncy"
             aria-label="Close"
           >
-            <X className="w-5 h-5 text-surface-500" />
+            <X className="w-4 h-4 text-foreground" strokeWidth={2.5} />
           </button>
         </div>
 

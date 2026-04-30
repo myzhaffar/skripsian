@@ -24,14 +24,6 @@ export type LogBimbingan = {
   updatedAt: string;
 };
 
-export type ChecklistItem = {
-  id: string;
-  logId: string;
-  itemIndex: number;
-  isChecked: boolean;
-  userEmail: string;
-};
-
 export type PaginatedResponse<T> = {
   data: T[];
   total: number;
@@ -40,6 +32,7 @@ export type PaginatedResponse<T> = {
 };
 
 // Utility functions
+
 
 /**
  * Merge class names conditionally (simplified cn utility)
@@ -104,34 +97,4 @@ export function daysSince(dateStr: string): number {
 export function truncate(text: string, maxLength: number = 60): string {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + '…';
-}
-
-/**
- * Hardcoded user email for Phase 1
- */
-export const USER_EMAIL = 'dev@test.com';
-
-/**
- * API base URL
- */
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
-
-/**
- * Generic fetch wrapper
- */
-export async function apiFetch<T>(
-  path: string,
-  options?: RequestInit
-): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
-    ...options,
-  });
-  if (!res.ok) {
-    throw new Error(`API Error: ${res.status} ${res.statusText}`);
-  }
-  return res.json();
 }
