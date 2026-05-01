@@ -282,7 +282,7 @@ function LogRow({
         </td>
       </tr>
       {isExpanded && (
-        <tr>
+        <tr onClick={(e) => e.stopPropagation()}>
           <td colSpan={6} className="px-6 py-4 bg-accent/5 border-b border-border">
             <div className="space-y-4">
               {log.deskripsiProgres && (

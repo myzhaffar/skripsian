@@ -7,6 +7,7 @@ import CountdownBanner from '@/components/CountdownBanner';
 import StatCard from '@/components/StatCard';
 import ActivityChart from '@/components/ActivityChart';
 import RecentAgenda from '@/components/RecentAgenda';
+import ReminderModal from '@/components/ReminderModal';
 import { BookOpen, AlertCircle, CheckCircle2, Clock, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -115,6 +116,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
+      <ReminderModal skripsi={skripsi} logs={logs} />
       <CountdownBanner targetLulus={skripsi.targetLulus} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -12,17 +12,17 @@ const iconMap = {
 
 const colorMap = {
   success: {
-    bg: 'bg-quaternary/20 border-foreground',
+    bg: 'bg-white',
     shadow: 'shadow-[4px_4px_0px_0px_#34D399]',
     icon: 'text-emerald-700',
   },
   error: {
-    bg: 'bg-red-100 border-foreground',
+    bg: 'bg-white',
     shadow: 'shadow-[4px_4px_0px_0px_#EF4444]',
     icon: 'text-red-700',
   },
   info: {
-    bg: 'bg-accent/10 border-foreground',
+    bg: 'bg-white',
     shadow: 'shadow-[4px_4px_0px_0px_#8B5CF6]',
     icon: 'text-accent',
   },
@@ -40,7 +40,7 @@ export default function ToastContainer() {
           <div
             key={toast.id}
             className={cn(
-              'pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-full border-2 animate-slide-in-right min-w-[280px] max-w-[400px]',
+              'pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-full border-2 border-foreground animate-slide-in-right min-w-[280px] max-w-[400px]',
               colors.bg,
               colors.shadow
             )}

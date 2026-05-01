@@ -284,7 +284,8 @@ export async function getChecklistItems(logId: string): Promise<Record<number, b
 }
 
 /**
- * Toggle a checklist item (upsert).
+ * Toggle a checklist item.
+ * Uses select → insert/update instead of upsert for broader compatibility.
  */
 export async function toggleChecklist(
   logId: string,
@@ -292,19 +293,37 @@ export async function toggleChecklist(
   isChecked: boolean,
   userEmail: string = USER_EMAIL
 ): Promise<void> {
-  const { error } = await supabase
+  // Check if the row already exists
+  const { data: existing, error: selectError } = await supabase
     .from('checklist_items')
-    .upsert(
-      {
+    .select('id')
+    .eq('log_id', logId)
+    .eq('item_index', itemIndex)
+    .maybeSingle();
+
+  if (selectError) throw new Error(`Failed to check checklist: ${selectError.message}`);
+
+  if (existing) {
+    // Update existing row
+    const { error } = await supabase
+      .from('checklist_items')
+      .update({ is_checked: isChecked })
+      .eq('id', existing.id);
+
+    if (error) throw new Error(`Failed to update checklist: ${error.message}`);
+  } else {
+    // Insert new row
+    const { error } = await supabase
+      .from('checklist_items')
+      .insert({
         log_id: logId,
         item_index: itemIndex,
         is_checked: isChecked,
         user_email: userEmail,
-      },
-      { onConflict: 'log_id,item_index' }
-    );
+      });
 
-  if (error) throw new Error(`Failed to toggle checklist: ${error.message}`);
+    if (error) throw new Error(`Failed to insert checklist: ${error.message}`);
+  }
 }
 
 // ─── CSV Export ───────────────────────────────────────────────────────────

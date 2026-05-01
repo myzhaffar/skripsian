@@ -2,8 +2,6 @@ import { LogBimbingan, formatDateShort, truncate } from '@/lib/utils';
 import Badge from '@/components/ui/Badge';
 import { Calendar, BookOpen } from 'lucide-react';
 
-const itemColors = ['border-l-accent', 'border-l-secondary', 'border-l-tertiary', 'border-l-quaternary'];
-
 interface RecentAgendaProps {
   logs: LogBimbingan[];
 }
@@ -36,10 +34,10 @@ export default function RecentAgenda({ logs }: RecentAgendaProps) {
         {recentLogs.map((log, index) => (
           <div
             key={log.id}
-            className={`flex items-start gap-4 p-4 rounded-[12px] bg-background border-2 border-border border-l-4 ${itemColors[index % itemColors.length]} hover:shadow-pop transition-all duration-300 ease-bouncy animate-slide-up`}
+            className="flex items-start gap-4 p-4 rounded-[12px] bg-background border-2 border-foreground hover:shadow-pop transition-all duration-300 ease-bouncy animate-slide-up"
             style={{ animationDelay: `${index * 80}ms` }}
           >
-            <div className={`flex-shrink-0 w-10 h-10 rounded-full border-2 border-foreground flex items-center justify-center text-white ${index % 2 === 0 ? 'bg-accent' : 'bg-secondary'}`}>
+            <div className="flex-shrink-0 w-10 h-10 rounded-full border-2 border-foreground flex items-center justify-center text-white bg-accent">
               <Calendar className="w-5 h-5" strokeWidth={2.5} />
             </div>
             <div className="flex-1 min-w-0">

@@ -86,17 +86,16 @@ export default function ChecklistItems({
       {/* Checklist items */}
       <div className="space-y-2">
         {items.map((item, index) => (
-          <label
+          <div
             key={index}
             className={cn(
               'flex items-start gap-3 p-3 rounded-[12px] cursor-pointer transition-all duration-300 ease-bouncy',
               'hover:bg-tertiary/10 border-2 border-transparent hover:border-border',
               checked[index] && 'opacity-60'
             )}
+            onClick={() => !loading[index] && !initialLoading && handleToggle(index)}
           >
-            <button
-              onClick={() => handleToggle(index)}
-              disabled={loading[index] || initialLoading}
+            <div
               className={cn(
                 'flex-shrink-0 w-6 h-6 rounded-[6px] border-2 border-foreground flex items-center justify-center transition-all duration-300 ease-bouncy mt-0.5',
                 checked[index]
@@ -105,7 +104,7 @@ export default function ChecklistItems({
               )}
             >
               {checked[index] && <Check className="w-4 h-4" strokeWidth={3} />}
-            </button>
+            </div>
             <span
               className={cn(
                 'text-sm text-foreground font-sans leading-relaxed',
@@ -114,7 +113,7 @@ export default function ChecklistItems({
             >
               {item}
             </span>
-          </label>
+          </div>
         ))}
       </div>
     </div>
